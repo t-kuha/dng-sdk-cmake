@@ -43,7 +43,6 @@ file (
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/source/XMPFiles_IO.cpp
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/source/SafeStringAPIs.cpp
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/source/XMP_LibUtils.cpp
-    ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/source/Host_IO-POSIX.cpp
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/public/include/XMPCommon/source/*.cpp
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/public/include/XMPCore/source/*.cpp
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/third-party/zuid/sources/*.cpp
@@ -112,23 +111,39 @@ file (
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/FormatSupport/WAVE/*.cpp
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/FormatSupport/WebP/*.cpp
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/NativeMetadataSupport/*.cpp
-    ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/*.cpp
+    ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/FileHandlerInstance.cpp
+    ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/HostAPIImpl.cpp
+    ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/Module.cpp
+    ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/PluginManager.cpp
+    ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/XMPAtoms.cpp
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/WXMPFiles.cpp
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/public/include/client-glue/*.incl_cpp
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/dng_sdk/source/*.cpp
 )
 
-# remove source of dng_validate etc.
-list(
-    REMOVE_ITEM SRC_FILES
-    DNG_VALIDATE_SRC
-    ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPCore/resource/mac
-    ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPCore/source/Android_Utils.cpp
-    ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/source/Host_IO-Win.cpp
-    ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/OS_Utils_Android.cpp
-    ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/OS_Utils_Linux.cpp
-    ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/OS_Utils_WIN.cpp
-)
+# remove source of dng_validate
+list(REMOVE_ITEM SRC_FILES DNG_VALIDATE_SRC)
+# add platform-specific source files
+if (APPLE)
+    list(
+        APPEND SRC_FILES
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/OS_Utils_Mac.cpp
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/source/Host_IO-POSIX.cpp
+    )
+elseif (WIN32)
+    list(
+        APPEND SRC_FILES
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/OS_Utils_WIN.cpp
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/source/Host_IO-Win.cpp
+    )
+else ()  # UNIX/Linux
+    list(
+        APPEND SRC_FILES
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/OS_Utils_Linux.cpp
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/source/Host_IO-POSIX.cpp
+    )
+    message("${SRC_FILES}")
+endif()
 
 # Create the shared library
 add_library(dng SHARED ${SRC_FILES})
@@ -168,7 +183,7 @@ set_target_properties(
 
 # common setting
 add_dependencies(dng libjpeg libjxl)
-add_compile_definitions(-DqDNGValidate=1 -DqDNGUseXMP=1 -DqDNGUseLibJPEG=1 -DAdobePrivate=1 -DBUILDING_XMPCORE_LIB=1 -DBUILDING_XMPCORE_AS_STATIC=1)
+add_definitions(-DqDNGValidate -DqDNGUseXMP -DqDNGUseLibJPEG -DAdobePrivate -DBUILDING_XMPCORE_LIB -DBUILDING_XMPCORE_AS_STATIC)
 
 # platform-specific donfigs
 if (APPLE) 
@@ -179,7 +194,7 @@ elseif (WIN32)
     add_definitions(-DqWinOS=1 -DWIN_ENV)
 else ()  # UNIX/Linux
     set(CMAKE_CXX_FLAGS "-fPIC")
-    add_definitions(-DqLinux=1 -DUNIX_ENV)
+    add_definitions(-DqLinux -DUNIX_ENV -DXMP_StaticBuild=1 -DXMP_64=1 -DXMP_COMPONENT_INT_NAMESPACE=AdobeXMPCore_Int)
 endif()
 
 # Set include directory for headers
@@ -191,6 +206,7 @@ target_include_directories(
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/public/include
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFilesPlugins/api/source
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPCore/third-party/expat/public/lib
+    ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPCore/third-party/boost
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/public/include/XMPCore/Interfaces
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/public/include/client-glue
 )
@@ -202,7 +218,7 @@ if (BUILD_DNG_VALIDATE)
     # build dng_validate command
     message("build dng_validate...")
     add_executable(dng_validate ${DNG_VALIDATE_SRC})
-    add_compile_definitions(-DqDNGValidateTarget=1 -DqDNGUseXMP=1)
+    add_definitions(-DqDNGValidateTarget -DqDNGUseXMP)
     target_include_directories(
         dng_validate PRIVATE 
         ${FETCHCONTENT_BASE_DIR}/dngsdk-src/dng_sdk/source

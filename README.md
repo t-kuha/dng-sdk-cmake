@@ -19,4 +19,4 @@ $ cmake --install build  # sudo may be necessary
 | macOS (Intel)         | :heavy_check_mark: |
 | macOS (Apple Silicon) | TODO |
 | Windows               | TODO |
-| Linux                 | TODO |
+| Linux (Ubuntu 22.04)  | :heavy_check_mark: |
