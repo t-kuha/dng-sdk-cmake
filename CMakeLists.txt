@@ -19,7 +19,7 @@ include(ExternalProject)
 include(ProcessorCount)
 
 # configs
-set (CMAKE_BUILD_TYPE Release CACHE STRING "build type")  # default to release build
+set (CMAKE_BUILD_TYPE "Release")  # default to release build
 set (BUILD_DNG_VALIDATE ON CACHE BOOL "Build dng_validate command")
 
 # main processing
