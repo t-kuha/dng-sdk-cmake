@@ -6,7 +6,7 @@
 
 ```shell-session
 $ cmake -S . -B build [-DCMAKE_BUILD_TYPE=<build type>] [-DCMAKE_INSTALL_PREFIX=<installation path>]
-$ cmake --build build    # sudo may be necessary to install libjpeg & libjxl
+$ cmake --build build    # sudo may be necessary for installing libjpeg & libjxl
 $ cmake --install build  # sudo may be necessary 
 ```
 
@@ -14,9 +14,9 @@ $ cmake --install build  # sudo may be necessary
 
 ## Status
 
-| platform              | status |
-|-----------------------|--------|
+| platform              | status             |
+|:----------------------|:------------------:|
 | macOS (Intel)         | :heavy_check_mark: |
-| macOS (Apple Silicon) | TODO |
-| Windows               | TODO |
+| macOS (Apple Silicon) | :heavy_check_mark: |
+| Windows               | TODO               |
 | Linux (Ubuntu 22.04)  | :heavy_check_mark: |
