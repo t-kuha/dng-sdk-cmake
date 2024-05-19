@@ -182,7 +182,7 @@ set_target_properties(
 
 # common setting
 add_dependencies(dng libjpeg libjxl)
-add_definitions(-DqDNGValidate -DqDNGUseXMP -DqDNGUseLibJPEG -DAdobePrivate -DBUILDING_XMPCORE_LIB -DBUILDING_XMPCORE_AS_STATIC)
+add_definitions(-DqDNGValidate=1 -DdDNGDebug=0 -DqDNGUseXMP=1 -DqDNGUseLibJPEG=1 -DAdobePrivate=1 -DBUILDING_XMPCORE_LIB=1 -DBUILDING_XMPCORE_AS_STATIC=1)
 
 # platform-specific donfigs
 if (APPLE) 
@@ -192,7 +192,7 @@ if (APPLE)
 elseif (WIN32)
     add_definitions(-DqWinOS=1 -DWIN_ENV)
 else ()  # UNIX/Linux
-    set(CMAKE_CXX_FLAGS "-fPIC")
+    set(CMAKE_CXX_FLAGS "-fPIC -Wall -Wextra")
     add_definitions(-DqLinux -DUNIX_ENV -DXMP_StaticBuild=1 -DXMP_64=1 -DXMP_COMPONENT_INT_NAMESPACE=AdobeXMPCore_Int)
 endif()
 
