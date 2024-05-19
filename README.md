@@ -5,9 +5,9 @@
 ## How to Build:
 
 ```shell-session
-$ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release [-DCMAKE_INSTALL_PREFIX=<installation path>]
-$ cmake --build build
-$ cmake --install build
+$ cmake -S . -B build [-DCMAKE_BUILD_TYPE=<build type>] [-DCMAKE_INSTALL_PREFIX=<installation path>]
+$ cmake --build build    # sudo may be necessary to install libjpeg & libjxl
+$ cmake --install build  # sudo may be necessary 
 ```
 
 ***
