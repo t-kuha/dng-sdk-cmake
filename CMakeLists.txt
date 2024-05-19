@@ -25,8 +25,7 @@ set (BUILD_DNG_VALIDATE ON CACHE BOOL "Build dng_validate command")
 # main processing
 FetchContent_Declare(
     dngsdk
-    URL ${CMAKE_SOURCE_DIR}/_src/dng_sdk_1_7_1.zip
-    # URL https://download.adobe.com/pub/adobe/dng/dng_sdk_1_7_1.zip
+    URL https://download.adobe.com/pub/adobe/dng/dng_sdk_1_7_1.zip
     URL_HASH MD5=b73ba6cc243d9617aa4371a0f6d76e4b
 )
 FetchContent_MakeAvailable(dngsdk)
