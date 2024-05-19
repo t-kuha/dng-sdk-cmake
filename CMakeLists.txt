@@ -142,7 +142,6 @@ else ()  # UNIX/Linux
         ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/OS_Utils_Linux.cpp
         ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/source/Host_IO-POSIX.cpp
     )
-    message("${SRC_FILES}")
 endif()
 
 # Create the shared library
