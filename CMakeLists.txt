@@ -10,7 +10,7 @@ endif()
 project(dng VERSION 1.7.1 DESCRIPTION "DNG SDK dynamic library" LANGUAGES C CXX)
 
 # need >= C++11
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 # CMake functionality
 include(GNUInstallDirs)
@@ -19,8 +19,16 @@ include(ExternalProject)
 include(ProcessorCount)
 
 # configs
-set (CMAKE_BUILD_TYPE "Release")  # default to release build
-set (BUILD_DNG_VALIDATE ON CACHE BOOL "Build dng_validate command")
+if(WIN32)
+    # Windows - force to OFF
+    message("On Windows, dng_validate will not be built...")
+    set (CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    set (${BUILD_DNG_VALIDATE} OFF)
+    set (BUILD_DNG_VALIDATE OFF CACHE BOOL "Build dng_validate command")
+else()
+    set (CMAKE_BUILD_TYPE "Release")  # default to release build
+    set (BUILD_DNG_VALIDATE ON CACHE BOOL "Build dng_validate command")
+endif()
 
 # main processing
 FetchContent_Declare(
@@ -135,6 +143,53 @@ elseif (WIN32)
         APPEND SRC_FILES
         ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/OS_Utils_WIN.cpp
         ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/source/Host_IO-Win.cpp
+        # Windows - add source files directly
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jaricom.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jcapimin.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jcapistd.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jcarith.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jccoefct.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jccolor.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jcdctmgr.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jchuff.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jcinit.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jcmainct.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jcmarker.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jcmaster.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jcomapi.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jcparam.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jcprepct.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jcsample.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jctrans.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jdapimin.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jdapistd.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jdarith.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jdatadst.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jdatasrc.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jdcoefct.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jdcolor.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jddctmgr.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jdhuff.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jdinput.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jdmainct.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jdmarker.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jdmaster.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jdmerge.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jdpostct.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jdsample.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jdtrans.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jerror.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jfdctflt.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jfdctfst.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jfdctint.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jidctflt.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jidctfst.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jidctint.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jmemmgr.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jmemnobs.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jquant1.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jquant2.c
+        ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jutils.c
     )
 else ()  # UNIX/Linux
     list(
@@ -158,13 +213,17 @@ else()
 endif()
 
 # libjpeg
-ProcessorCount(N) # for parallel execution
-ExternalProject_Add(
-    libjpeg
-    SOURCE_DIR ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg
-    CONFIGURE_COMMAND ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/configure --prefix=${CMAKE_INSTALL_PREFIX}
-    BUILD_COMMAND make -j${N}
-)
+if(WIN32)
+    target_include_directories(dng PRIVATE ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg)   
+else()
+    ProcessorCount(N) # for parallel execution
+    ExternalProject_Add(
+        libjpeg
+        SOURCE_DIR ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg
+        CONFIGURE_COMMAND ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/configure --prefix=${CMAKE_INSTALL_PREFIX}
+        BUILD_COMMAND make -j${N}
+    )
+endif()
 
 # libjxl
 ExternalProject_Add(
@@ -181,25 +240,31 @@ set_target_properties(
 )
 
 # common setting
-add_dependencies(dng libjpeg libjxl)
-add_definitions(-DqDNGValidate=1 -DdDNGDebug=0 -DqDNGUseXMP=1 -DqDNGUseLibJPEG=1 -DAdobePrivate=1 -DBUILDING_XMPCORE_LIB=1 -DBUILDING_XMPCORE_AS_STATIC=1)
+if (NOT WIN32)
+    add_dependencies(dng libjpeg)
+endif()
+add_dependencies(dng libjxl)
+add_definitions(
+    -DqDNGValidate=1 -DdDNGDebug=0 -DqDNGUseXMP=1 -DqDNGUseLibJPEG=1 -DAdobePrivate=1
+    -DBUILDING_XMPCORE_LIB=1 -DBUILDING_XMPCORE_AS_STATIC=1 -DXMP_StaticBuild=1 -DXMP_COMPONENT_INT_NAMESPACE=AdobeXMPCore_Int
+)
 
 # platform-specific donfigs
 if (APPLE) 
     set(CMAKE_CXX_FLAGS "-fPIC")
-    add_definitions(-DqMacOS=1 -DMAC_ENV -DXMP_StaticBuild=1 -DXMP_64=1 -DXMP_COMPONENT_INT_NAMESPACE=AdobeXMPCore_Int)
+    add_definitions(-DqMacOS=1 -DMAC_ENV -DXMP_64=1)
     target_link_libraries(dng PRIVATE "-framework CoreServices")
 elseif (WIN32)
-    add_definitions(-DqWinOS=1 -DWIN_ENV)
+    add_definitions(-DqWinOS=1 -DWIN_ENV -DNOMINMAX -DUNICODE)
 else ()  # UNIX/Linux
     set(CMAKE_CXX_FLAGS "-fPIC -Wall -Wextra")
-    add_definitions(-DqLinux -DUNIX_ENV -DXMP_StaticBuild=1 -DXMP_64=1 -DXMP_COMPONENT_INT_NAMESPACE=AdobeXMPCore_Int)
+    add_definitions(-DqLinux -DUNIX_ENV -DXMP_64=1)
 endif()
 
 # Set include directory for headers
 target_include_directories(
     dng PRIVATE
-    ZLIB::ZLIB
+    ${ZLIB_INCLUDE_DIRS}
     ${CMAKE_INSTALL_PREFIX}/include
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/public/include
@@ -211,7 +276,10 @@ target_include_directories(
 )
 
 target_link_directories(dng PRIVATE ${CMAKE_INSTALL_PREFIX}/lib)
-target_link_libraries(dng PRIVATE ZLIB::ZLIB jpeg jxl jxl_threads)
+if (NOT WIN32)
+    target_link_libraries(dng PRIVATE jpeg)
+endif()
+target_link_libraries(dng PRIVATE ${ZLIB_LIBRARIES} jxl jxl_threads)
 
 if (BUILD_DNG_VALIDATE)
     # build dng_validate command
