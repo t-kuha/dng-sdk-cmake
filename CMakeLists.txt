@@ -6,6 +6,9 @@ if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
     cmake_policy(SET CMP0135 NEW)
 endif()
 
+# default to release build except Windows
+set (CMAKE_BUILD_TYPE "Release" CACHE STRING "build type")
+
 # Define project name and (optional) version
 project(dng VERSION 1.7.1 DESCRIPTION "DNG SDK dynamic library" LANGUAGES C CXX)
 
@@ -23,10 +26,8 @@ if(WIN32)
     # Windows - force to OFF
     message("On Windows, dng_validate will not be built...")
     set (CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-    set (${BUILD_DNG_VALIDATE} OFF)
     set (BUILD_DNG_VALIDATE OFF CACHE BOOL "Build dng_validate command")
 else()
-    set (CMAKE_BUILD_TYPE "Release")  # default to release build
     set (BUILD_DNG_VALIDATE ON CACHE BOOL "Build dng_validate command")
 endif()
 
