@@ -246,20 +246,20 @@ if (NOT WIN32)
 endif()
 add_dependencies(dng libjxl)
 add_compile_definitions(
-    -DqDNGValidate=1 -DqDNGDebug=0 -DqDNGUseXMP=1 -DqDNGUseLibJPEG=1 -DAdobePrivate=1
-    -DBUILDING_XMPCORE_LIB=1 -DBUILDING_XMPCORE_AS_STATIC=1 -DXMP_StaticBuild=1 -DXMP_COMPONENT_INT_NAMESPACE=AdobeXMPCore_Int
+    qDNGValidate=1 qDNGDebug=0 qDNGUseXMP=1 qDNGUseLibJPEG=1 AdobePrivate=1
+    BUILDING_XMPCORE_LIB=1 BUILDING_XMPCORE_AS_STATIC=1 XMP_StaticBuild=1 XMP_COMPONENT_INT_NAMESPACE=AdobeXMPCore_Int
 )
 
 # platform-specific donfigs
 if (APPLE) 
     set(CMAKE_CXX_FLAGS "-fPIC")
-    add_compile_definitions(-DqMacOS=1 -DMAC_ENV -DXMP_64=1)
+    add_compile_definitions(qMacOS=1 MAC_ENV XMP_64=1)
     target_link_libraries(dng PRIVATE "-framework CoreServices")
 elseif (WIN32)
-    add_compile_definitions(-DqWinOS=1 -DWIN_ENV -DNOMINMAX -DUNICODE)
+    add_compile_definitions(qWinOS=1 WIN_ENV NOMINMAX UNICODE)
 else ()  # UNIX/Linux
     set(CMAKE_CXX_FLAGS "-fPIC -Wall -Wextra")
-    add_compile_definitions(-DqLinux -DUNIX_ENV -DXMP_64=1)
+    add_compile_definitions(qLinux UNIX_ENV XMP_64=1)
 endif()
 
 # Set include directory for headers
@@ -286,7 +286,7 @@ if (BUILD_DNG_VALIDATE)
     # build dng_validate command
     message("build dng_validate...")
     add_executable(dng_validate ${DNG_VALIDATE_SRC})
-    add_compile_definitions(-DqDNGValidateTarget -DqDNGUseXMP)
+    add_compile_definitions(qDNGValidateTarget qDNGUseXMP)
     target_include_directories(
         dng_validate PRIVATE 
         ${FETCHCONTENT_BASE_DIR}/dngsdk-src/dng_sdk/source
