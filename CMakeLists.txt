@@ -245,7 +245,8 @@ if (NOT WIN32)
     add_dependencies(dng libjpeg)
 endif()
 add_dependencies(dng libjxl)
-add_compile_definitions(
+target_compile_definitions(
+    dng PRIVATE
     qDNGValidate=1 qDNGDebug=0 qDNGUseXMP=1 qDNGUseLibJPEG=1 AdobePrivate=1
     BUILDING_XMPCORE_LIB=1 BUILDING_XMPCORE_AS_STATIC=1 XMP_StaticBuild=1 XMP_COMPONENT_INT_NAMESPACE=AdobeXMPCore_Int
 )
@@ -259,7 +260,7 @@ elseif (WIN32)
     add_compile_definitions(qWinOS=1 WIN_ENV NOMINMAX UNICODE)
 else ()  # UNIX/Linux
     set(CMAKE_CXX_FLAGS "-fPIC -Wall -Wextra")
-    add_compile_definitions(qLinux UNIX_ENV XMP_64=1)
+    target_compile_definitions(dng PUBLIC qLinux UNIX_ENV XMP_64=1)
 endif()
 
 # Set include directory for headers
@@ -286,7 +287,7 @@ if (BUILD_DNG_VALIDATE)
     # build dng_validate command
     message("build dng_validate...")
     add_executable(dng_validate ${DNG_VALIDATE_SRC})
-    add_compile_definitions(qDNGValidateTarget qDNGUseXMP)
+    target_compile_definitions(dng_validate PRIVATE qDNGValidateTarget qDNGUseXMP)
     target_include_directories(
         dng_validate PRIVATE 
         ${FETCHCONTENT_BASE_DIR}/dngsdk-src/dng_sdk/source
