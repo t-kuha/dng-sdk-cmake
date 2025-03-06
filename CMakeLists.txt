@@ -259,7 +259,7 @@ if (APPLE)
 elseif (WIN32)
     add_compile_definitions(qWinOS=1 WIN_ENV NOMINMAX UNICODE)
 else ()  # UNIX/Linux
-    set(CMAKE_CXX_FLAGS "-fPIC -Wall -Wextra")
+    target_compile_options(dng PUBLIC -fPIC -Wall -Wextra)
     target_compile_definitions(dng PUBLIC qLinux UNIX_ENV XMP_64=1)
 endif()
 
