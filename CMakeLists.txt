@@ -246,7 +246,7 @@ if (NOT WIN32)
 endif()
 add_dependencies(dng libjxl)
 add_compile_definitions(
-    -DqDNGValidate=1 -DdDNGDebug=0 -DqDNGUseXMP=1 -DqDNGUseLibJPEG=1 -DAdobePrivate=1
+    -DqDNGValidate=1 -DqDNGDebug=0 -DqDNGUseXMP=1 -DqDNGUseLibJPEG=1 -DAdobePrivate=1
     -DBUILDING_XMPCORE_LIB=1 -DBUILDING_XMPCORE_AS_STATIC=1 -DXMP_StaticBuild=1 -DXMP_COMPONENT_INT_NAMESPACE=AdobeXMPCore_Int
 )
 
