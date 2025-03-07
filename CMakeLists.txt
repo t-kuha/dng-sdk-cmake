@@ -203,12 +203,18 @@ endif()
 # Create the shared library
 add_library(dng SHARED ${SRC_FILES})
 
+# set library version information
+set_target_properties(
+    dng PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR}
+)
+
 # ----- dependencies
 # zlib
 include(FindZLIB)
 if(ZLIB_FOUND)
     message("found zlib")
-    # message("using zlib ver. ${ZLIB_VERSION}")
 else()
     message(SEND_ERROR "zlib not found...")
 endif()
@@ -231,13 +237,6 @@ ExternalProject_Add(
     libjxl
     SOURCE_DIR ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjxl/libjxl
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF -DJPEGXL_ENABLE_SJPEG=OFF -DJPEGXL_ENABLE_EXAMPLES=OFF -DJPEGXL_ENABLE_TOOLS=OFF -DJPEGXL_ENABLE_BENCHMARK=OFF -DJPEGXL_ENABLE_MANPAGES=OFF -DJPEGXL_ENABLE_JPEGLI=OFF -DBROTLI_BUNDLED_MODE=ON -DHWY_ENABLE_INSTALL=OFF -DHWY_ENABLE_TESTS=OFF 
-)
-
-# set library version information
-set_target_properties(
-    dng PROPERTIES
-    VERSION ${PROJECT_VERSION}
-    SOVERSION ${PROJECT_VERSION_MAJOR}
 )
 
 # common setting
