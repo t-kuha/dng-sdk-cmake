@@ -266,7 +266,7 @@ elseif(WIN32)
     target_compile_definitions(qWinOS=1 WIN_ENV NOMINMAX UNICODE)
 else()  # UNIX/Linux
     target_compile_options(dng PUBLIC -fPIC -Wall -Wextra)
-    target_compile_definitions(dng PUBLIC qLinux UNIX_ENV XMP_64=1)
+    target_compile_definitions(dng PUBLIC qLinux=1 UNIX_ENV XMP_64=1)
 endif()
 
 # Set include directory for headers
