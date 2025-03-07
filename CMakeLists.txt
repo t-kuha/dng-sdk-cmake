@@ -247,9 +247,16 @@ endif()
 add_dependencies(dng libjxl)
 target_compile_definitions(
     dng PRIVATE
-    qDNGValidate=1 qDNGDebug=0 qDNGUseXMP=1 qDNGUseLibJPEG=1 AdobePrivate=1
+    $<IF:$<CONFIG:Debug>,qDNGDebug=1,qDNGDebug=0>
+    qDNGValidate=1 qDNGUseXMP=1 qDNGUseLibJPEG=1 AdobePrivate=1
     BUILDING_XMPCORE_LIB=1 BUILDING_XMPCORE_AS_STATIC=1 XMP_StaticBuild=1 XMP_COMPONENT_INT_NAMESPACE=AdobeXMPCore_Int
 )
+
+if (${BUILD_DNG_VALIDATE})
+    target_compile_definitions(dng PUBLIC qDNGValidateTarget=1)
+else ()
+    target_compile_definitions(dng PUBLIC qDNGValidateTarget=0)
+endif ()
 
 # platform-specific donfigs
 if (APPLE) 
@@ -257,7 +264,7 @@ if (APPLE)
     add_compile_definitions(qMacOS=1 MAC_ENV XMP_64=1)
     target_link_libraries(dng PRIVATE "-framework CoreServices")
 elseif (WIN32)
-    add_compile_definitions(qWinOS=1 WIN_ENV NOMINMAX UNICODE)
+    target_compile_definitions(qWinOS=1 WIN_ENV NOMINMAX UNICODE)
 else ()  # UNIX/Linux
     target_compile_options(dng PUBLIC -fPIC -Wall -Wextra)
     target_compile_definitions(dng PUBLIC qLinux UNIX_ENV XMP_64=1)
