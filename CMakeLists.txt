@@ -294,7 +294,7 @@ if (BUILD_DNG_VALIDATE)
     # build dng_validate command
     message("build dng_validate...")
     add_executable(dng_validate ${DNG_VALIDATE_SRC})
-    target_compile_definitions(dng_validate PRIVATE qDNGValidateTarget qDNGUseXMP)
+    target_compile_definitions(dng_validate PRIVATE qDNGValidateTarget=1 qDNGUseXMP=1)
     target_include_directories(
         dng_validate PRIVATE 
         ${FETCHCONTENT_BASE_DIR}/dngsdk-src/dng_sdk/source
