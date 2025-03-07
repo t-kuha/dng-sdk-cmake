@@ -15,6 +15,10 @@ project(dng VERSION 1.7.1 DESCRIPTION "DNG SDK dynamic library" LANGUAGES C CXX)
 # need >= C++11
 set(CMAKE_CXX_STANDARD 14)
 
+set(CMAKE_SKIP_BUILD_RPATH FALSE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+
 # CMake functionality
 include(GNUInstallDirs)
 include(FetchContent)
