@@ -2,12 +2,12 @@
 cmake_minimum_required(VERSION 3.15)
 
 # Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP
-if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
     cmake_policy(SET CMP0135 NEW)
 endif()
 
 # default to release build except Windows
-set (CMAKE_BUILD_TYPE "Release" CACHE STRING "build type")
+set(CMAKE_BUILD_TYPE "Release" CACHE STRING "build type")
 
 # Define project name and (optional) version
 project(dng VERSION 1.7.1 DESCRIPTION "DNG SDK dynamic library" LANGUAGES C CXX)
@@ -25,10 +25,10 @@ include(ProcessorCount)
 if(WIN32)
     # Windows - force to OFF
     message("On Windows, dng_validate will not be built...")
-    set (CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-    set (BUILD_DNG_VALIDATE OFF CACHE BOOL "Build dng_validate command")
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    set(BUILD_DNG_VALIDATE OFF CACHE BOOL "Build dng_validate command")
 else()
-    set (BUILD_DNG_VALIDATE ON CACHE BOOL "Build dng_validate command")
+    set(BUILD_DNG_VALIDATE ON CACHE BOOL "Build dng_validate command")
 endif()
 
 # main processing
@@ -41,7 +41,7 @@ FetchContent_MakeAvailable(dngsdk)
 
 # List source files for the library
 set(DNG_VALIDATE_SRC "${FETCHCONTENT_BASE_DIR}/dngsdk-src/dng_sdk/source/dng_validate.cpp")
-file (
+file(
     GLOB SRC_FILES
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/source/XMP_ProgressTracker.cpp
     ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/source/UnicodeConversions.cpp
@@ -133,13 +133,13 @@ file (
 # remove source of dng_validate
 list(REMOVE_ITEM SRC_FILES DNG_VALIDATE_SRC)
 # add platform-specific source files
-if (APPLE)
+if(APPLE)
     list(
         APPEND SRC_FILES
         ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/OS_Utils_Mac.cpp
         ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/source/Host_IO-POSIX.cpp
     )
-elseif (WIN32)
+elseif(WIN32)
     list(
         APPEND SRC_FILES
         ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/OS_Utils_WIN.cpp
@@ -192,7 +192,7 @@ elseif (WIN32)
         ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jquant2.c
         ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjpeg/jutils.c
     )
-else ()  # UNIX/Linux
+else()  # UNIX/Linux
     list(
         APPEND SRC_FILES
         ${FETCHCONTENT_BASE_DIR}/dngsdk-src/xmp/toolkit/XMPFiles/source/PluginHandler/OS_Utils_Linux.cpp
@@ -206,7 +206,7 @@ add_library(dng SHARED ${SRC_FILES})
 # ----- dependencies
 # zlib
 include(FindZLIB)
-if (ZLIB_FOUND)
+if(ZLIB_FOUND)
     message("found zlib")
     # message("using zlib ver. ${ZLIB_VERSION}")
 else()
@@ -241,7 +241,7 @@ set_target_properties(
 )
 
 # common setting
-if (NOT WIN32)
+if(NOT WIN32)
     add_dependencies(dng libjpeg)
 endif()
 add_dependencies(dng libjxl)
@@ -252,20 +252,19 @@ target_compile_definitions(
     BUILDING_XMPCORE_LIB=1 BUILDING_XMPCORE_AS_STATIC=1 XMP_StaticBuild=1 XMP_COMPONENT_INT_NAMESPACE=AdobeXMPCore_Int
 )
 
-if (${BUILD_DNG_VALIDATE})
+if(${BUILD_DNG_VALIDATE})
     target_compile_definitions(dng PUBLIC qDNGValidateTarget=1)
-else ()
+else()
     target_compile_definitions(dng PUBLIC qDNGValidateTarget=0)
-endif ()
+endif()
 
 # platform-specific donfigs
-if (APPLE) 
-    set(CMAKE_CXX_FLAGS "-fPIC")
-    add_compile_definitions(qMacOS=1 MAC_ENV XMP_64=1)
+if(APPLE)
+    target_compile_definitions(dng PUBLIC qMacOS=1 MAC_ENV XMP_64=1)
     target_link_libraries(dng PRIVATE "-framework CoreServices")
-elseif (WIN32)
+elseif(WIN32)
     target_compile_definitions(qWinOS=1 WIN_ENV NOMINMAX UNICODE)
-else ()  # UNIX/Linux
+else()  # UNIX/Linux
     target_compile_options(dng PUBLIC -fPIC -Wall -Wextra)
     target_compile_definitions(dng PUBLIC qLinux UNIX_ENV XMP_64=1)
 endif()
@@ -285,12 +284,12 @@ target_include_directories(
 )
 
 target_link_directories(dng PRIVATE ${CMAKE_INSTALL_PREFIX}/lib)
-if (NOT WIN32)
+if(NOT WIN32)
     target_link_libraries(dng PRIVATE jpeg)
 endif()
 target_link_libraries(dng PRIVATE ${ZLIB_LIBRARIES} jxl jxl_threads)
 
-if (BUILD_DNG_VALIDATE)
+if(BUILD_DNG_VALIDATE)
     # build dng_validate command
     message("build dng_validate...")
     add_executable(dng_validate ${DNG_VALIDATE_SRC})
@@ -301,15 +300,15 @@ if (BUILD_DNG_VALIDATE)
         ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjxl/libjxl/lib/include
     )
     target_link_libraries(dng_validate PRIVATE dng)
-endif (BUILD_DNG_VALIDATE)
+endif(BUILD_DNG_VALIDATE)
 
 # install header & library files (& dng_validate command)
-install (
+install(
     DIRECTORY ${FETCHCONTENT_BASE_DIR}/dngsdk-src/dng_sdk/source/
     DESTINATION include/dng
     FILES_MATCHING PATTERN "*.h"
 )
-install (TARGETS dng LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-if (BUILD_DNG_VALIDATE)
+install(TARGETS dng LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+if(BUILD_DNG_VALIDATE)
     install(TARGETS dng_validate DESTINATION ${CMAKE_INSTALL_BINDIR})
-endif (BUILD_DNG_VALIDATE)
+endif(BUILD_DNG_VALIDATE)
