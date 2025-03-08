@@ -8,6 +8,7 @@ endif()
 
 # default to release build except Windows
 set(CMAKE_BUILD_TYPE "Release" CACHE STRING "build type")
+set(BUILD_DNG_VALIDATE ON CACHE BOOL "Build dng_validate command")
 
 # Define project name and (optional) version
 project(dng VERSION 1.7.1 DESCRIPTION "DNG SDK dynamic library" LANGUAGES C CXX)
@@ -27,12 +28,8 @@ include(ProcessorCount)
 
 # configs
 if(WIN32)
-    # Windows - force to OFF
-    message("On Windows, dng_validate will not be built...")
-    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-    set(BUILD_DNG_VALIDATE OFF CACHE BOOL "Build dng_validate command")
-else()
-    set(BUILD_DNG_VALIDATE ON CACHE BOOL "Build dng_validate command")
+    # Windows: FIXME
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)    
 endif()
 
 # main processing
