@@ -263,7 +263,7 @@ if(APPLE)
     target_compile_definitions(dng PUBLIC qMacOS=1 MAC_ENV XMP_64=1)
     target_link_libraries(dng PRIVATE "-framework CoreServices")
 elseif(WIN32)
-    target_compile_definitions(qWinOS=1 WIN_ENV NOMINMAX UNICODE)
+    target_compile_definitions(dng PUBLIC qWinOS=1 WIN_ENV NOMINMAX UNICODE)
 else()  # UNIX/Linux
     target_compile_options(dng PUBLIC -fPIC -Wall -Wextra)
     target_compile_definitions(dng PUBLIC qLinux=1 UNIX_ENV XMP_64=1)
