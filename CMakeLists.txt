@@ -35,8 +35,8 @@ endif()
 # main processing
 FetchContent_Declare(
     dngsdk
-    URL https://download.adobe.com/pub/adobe/dng/dng_sdk_1_7_1.zip
-    URL_HASH MD5=b73ba6cc243d9617aa4371a0f6d76e4b
+    URL https://download.adobe.com/pub/adobe/dng/dng_sdk_1_7_1_2410_20251117.zip
+    URL_HASH MD5=02d4ff3350149312b38d682070c715d0
 )
 FetchContent_MakeAvailable(dngsdk)
 
