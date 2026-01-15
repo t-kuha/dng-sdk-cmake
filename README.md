@@ -24,5 +24,5 @@ $ ./build/dng_validate -v build/_deps/dngsdk-src/sample_files/01_jxl_linear_raw_
 |:----------------------|:------------------:|
 | macOS (Intel)         | :heavy_check_mark: |
 | macOS (Apple Silicon) | :heavy_check_mark: |
-| Windows               | .dll only          |
+| Windows               | need fix           |
 | Linux (Ubuntu 22.04)  | :heavy_check_mark: |
