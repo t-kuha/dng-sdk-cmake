@@ -6,33 +6,29 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
     cmake_policy(SET CMP0135 NEW)
 endif()
 
-# default to release build except Windows
-set(CMAKE_BUILD_TYPE "Release" CACHE STRING "build type")
-set(BUILD_DNG_VALIDATE ON CACHE BOOL "Build dng_validate command")
-
-# Define project name and (optional) version
 project(dng VERSION 1.7.1 DESCRIPTION "DNG SDK dynamic library" LANGUAGES C CXX)
 
-# need >= C++11
-set(CMAKE_CXX_STANDARD 14)
+# --- Configuration
+set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type")
+set(BUILD_DNG_VALIDATE ON CACHE BOOL "Build dng_validate command")
+set(CMAKE_CXX_STANDARD 14) # need >= C++11
 
+# RPATH settings
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 
-# CMake functionality
 include(GNUInstallDirs)
 include(FetchContent)
 include(ExternalProject)
 include(ProcessorCount)
+include(FindZLIB)
 
-# configs
 if(WIN32)
     # Windows: FIXME
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)    
 endif()
 
-# main processing
+# --- Dependencies Fetch
 FetchContent_Declare(
     dngsdk
     URL https://download.adobe.com/pub/adobe/dng/dng_sdk_1_7_1_2502_20260303.zip
