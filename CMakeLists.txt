@@ -300,7 +300,7 @@ if(BUILD_DNG_VALIDATE)
         ${FETCHCONTENT_BASE_DIR}/dngsdk-src/libjxl/libjxl/lib/include
     )
     target_link_libraries(dng_validate PRIVATE dng)
-endif(BUILD_DNG_VALIDATE)
+endif()
 
 # install header & library files (& dng_validate command)
 install(
@@ -311,4 +311,4 @@ install(
 install(TARGETS dng LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 if(BUILD_DNG_VALIDATE)
     install(TARGETS dng_validate DESTINATION ${CMAKE_INSTALL_BINDIR})
-endif(BUILD_DNG_VALIDATE)
+endif()
