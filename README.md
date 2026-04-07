@@ -1,5 +1,7 @@
 # Building DNG SDK with CMake
 
+[![Build and Test](https://github.com/t-kuha/dng-sdk-cmake/actions/workflows/build.yml/badge.svg)](https://github.com/t-kuha/dng-sdk-cmake/actions/workflows/build.yml)
+
 - target DNG SDK version: v1.7.1
 
 ## How to Build

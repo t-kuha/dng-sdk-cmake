@@ -1,0 +1,43 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Dependencies (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake zlib1g-dev
+
+    - name: Configure CMake
+      run: |
+        cmake -S . -B build \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
+          -DBUILD_DNG_VALIDATE=ON
+
+    - name: Build
+      run: |
+        cmake --build build --config Release
+
+    - name: Install
+      run: |
+        cmake --install build
+
+    - name: Run dng_validate (Test)
+      run: |
+        ./build/dng_validate -v build/_deps/dngsdk-src/sample_files/01_jxl_linear_raw_integer.dng
