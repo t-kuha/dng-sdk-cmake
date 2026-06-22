@@ -3,3 +3,5 @@ build
 
 # macOS
 .DS_Store
+
+_*

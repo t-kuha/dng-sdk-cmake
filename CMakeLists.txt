@@ -31,8 +31,8 @@ endif()
 # --- Dependencies Fetch
 FetchContent_Declare(
     dngsdk
-    URL https://download.adobe.com/pub/adobe/dng/dng_sdk_1_7_1_2502_20260303.zip
-    URL_HASH MD5=8bc3809ea811fedef0906911350aa0cd
+    URL https://download.adobe.com/pub/adobe/dng/dng_sdk_1_7_1_2611_20260609.zip
+    URL_HASH MD5=021f03d4b5fc9d782d14b66372bfe15e
 )
 FetchContent_MakeAvailable(dngsdk)
 
